@@ -16,7 +16,7 @@ test("Should create an empty order", async function () {
 
 test("Should create an order with 3 products", async function () {
   const input = {
-    taxNumber: "406.302.170-27",
+    taxNumber: "407.302.170-27",
     items: [
       { idProduct: 1, quantity: 1 },
       { idProduct: 2, quantity: 1 },
@@ -30,7 +30,7 @@ test("Should create an order with 3 products", async function () {
 
 test("Should create an order with 3 products applying a discount coupon", async function () {
   const input = {
-    taxNumber: "406.302.170-27",
+    taxNumber: "407.302.170-27",
     items: [
       { idProduct: 1, quantity: 1 },
       { idProduct: 2, quantity: 1 },
