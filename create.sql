@@ -10,13 +10,15 @@ create table ccca.product (
   width integer,
   height integer,
   lenght integer,
-  weight numeric
+  weight numeric,
+  currency text
 );
 
-insert into ccca.product (id_product, description, price, width, height, lenght, weight) values (1, 'A', 1000, 100, 30, 10, 3);
-insert into ccca.product (id_product, description, price, width, height, lenght, weight) values (2, 'B', 5000, 50, 50, 50, 22);
-insert into ccca.product (id_product, description, price, width, height, lenght, weight) values (3, 'C', 30, 10, 10, 10, 0.9);
-insert into ccca.product (id_product, description, price, width, height, lenght, weight) values (4, 'D', 30, -10, 10, 10, 0.9);
+insert into ccca.product (id_product, description, price, width, height, lenght, weight, currency) values (1, 'A', 1000, 100, 30, 10, 3, 'BRL');
+insert into ccca.product (id_product, description, price, width, height, lenght, weight, currency) values (2, 'B', 5000, 50, 50, 50, 22, 'BRL');
+insert into ccca.product (id_product, description, price, width, height, lenght, weight, currency) values (3, 'C', 30, 10, 10, 10, 0.9, 'BRL');
+insert into ccca.product (id_product, description, price, width, height, lenght, weight, currency) values (4, 'D', 30, -10, 10, 10, 0.9, 'BRL');
+insert into ccca.product (id_product, description, price, width, height, lenght, weight, currency) values (5, 'A', 1000, 100, 30, 10, 3, 'USD');
 
 create table ccca.coupon (
   code text,
