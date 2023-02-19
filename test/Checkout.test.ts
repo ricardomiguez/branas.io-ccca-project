@@ -116,3 +116,12 @@ test("Should create an order with 1 product calculating the shipping with a mini
   expect(output.shipping).toBe(10);
   expect(output.total).toBe(40);
 });
+
+test("Should create an order with 1 product in dollar currency", async function () {
+  const input = {
+    taxNumber: "407.302.170-27",
+    items: [{ idProduct: 5, quantity: 1 }],
+  };
+  const output = await checkout.execute(input);
+  expect(output.total).toBe(3000);
+});
