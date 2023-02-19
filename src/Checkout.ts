@@ -1,11 +1,9 @@
-import pgp from "pg-promise";
+import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
+import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
 import { validate } from "./validator";
 
 export default class Checkout {
   async execute(input: Input): Promise<Output> {
-    const connection = pgp()(
-      "postgres://postgres:123456@localhost:5432/ricardomiguez"
-    );
     const isValid = validate(input.taxNumber);
     if (!isValid) throw new Error("Invalid tax number");
     const output: Output = { total: 0, shipping: 0 };
@@ -14,10 +12,8 @@ export default class Checkout {
       for (const item of input.items) {
         if (item.quantity <= 0) throw new Error("Invalid quantity");
         if (items.includes(item.idProduct)) throw new Error("Duplicated item");
-        const [productData] = await connection.query(
-          "select * from ccca.product where id_product = $1",
-          item.idProduct
-        );
+        const productRepository = new ProductRepositoryDatabase();
+        const productData = await productRepository.getProduct(item.idProduct);
         if (
           productData.width <= 0 ||
           productData.height <= 0 ||
@@ -37,10 +33,8 @@ export default class Checkout {
       }
     }
     if (input.coupon) {
-      const [couponData] = await connection.query(
-        "select * from ccca.coupon where code = $1",
-        input.coupon
-      );
+      const couponRepository = new CouponRepositoryDatabase();
+      const couponData = await couponRepository.getCoupon(input.coupon);
       if (couponData.expire_date.getTime() >= new Date().getTime()) {
         const percentage = parseFloat(couponData.percentage);
         output.total -= (output.total * percentage) / 100;
@@ -49,7 +43,6 @@ export default class Checkout {
     if (input.from && input.to) {
       output.total += output.shipping;
     }
-    await connection.$pool.end();
     return output;
   }
 }
