@@ -1,22 +1,29 @@
 import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
+import CurrencyGateway from "./CurrencyGateway";
 import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
+import ProductRepository from "./ProductRepository";
 import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
 import { validate } from "./validator";
 
 export default class Checkout {
+  constructor(
+    readonly currencyGateway: CurrencyGateway = new CurrencyGatewayHttp(),
+    readonly productRepository: ProductRepository = new ProductRepositoryDatabase()
+  ) {}
+
   async execute(input: Input): Promise<Output> {
     const isValid = validate(input.taxNumber);
     if (!isValid) throw new Error("Invalid tax number");
     const output: Output = { total: 0, shipping: 0 };
-    const currencyGateway = new CurrencyGatewayHttp();
-    const currencies = await currencyGateway.getCurrencies();
+    const currencies = await this.currencyGateway.getCurrencies();
     const items: number[] = [];
     if (input.items) {
       for (const item of input.items) {
         if (item.quantity <= 0) throw new Error("Invalid quantity");
         if (items.includes(item.idProduct)) throw new Error("Duplicated item");
-        const productRepository = new ProductRepositoryDatabase();
-        const productData = await productRepository.getProduct(item.idProduct);
+        const productData = await this.productRepository.getProduct(
+          item.idProduct
+        );
         if (
           productData.width <= 0 ||
           productData.height <= 0 ||
