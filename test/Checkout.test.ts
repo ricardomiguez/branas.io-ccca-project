@@ -1,6 +1,7 @@
 import sinon from "sinon";
 import Checkout from "../src/Checkout";
 import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
+import CurrencyGateway from "../src/CurrencyGateway";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 
@@ -185,4 +186,21 @@ test("Should create an order with 1 product in dollar currency (using a mock)", 
   expect(output.total).toBe(3000);
   mockCurrencyGateway.verify();
   mockCurrencyGateway.restore();
+});
+
+test("Should create an order with 1 product in dollar currency (using a fake)", async function () {
+  const currencyGateway: CurrencyGateway = {
+    async getCurrencies(): Promise<any> {
+      return {
+        usd: 3,
+      };
+    },
+  };
+  checkout = new Checkout(currencyGateway);
+  const input = {
+    taxNumber: "407.302.170-27",
+    items: [{ idProduct: 5, quantity: 1 }],
+  };
+  const output = await checkout.execute(input);
+  expect(output.total).toBe(3000);
 });
