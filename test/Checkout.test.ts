@@ -3,6 +3,7 @@ import Checkout from "../src/Checkout";
 import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
 import CurrencyGateway from "../src/CurrencyGateway";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
+import ProductRepository from "../src/ProductRepository";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 
 let checkout: Checkout;
@@ -196,10 +197,24 @@ test("Should create an order with 1 product in dollar currency (using a fake)", 
       };
     },
   };
-  checkout = new Checkout(currencyGateway);
+  const productRepository: ProductRepository = {
+    async getProduct(): Promise<any> {
+      return {
+        idProduct: 6,
+        description: "A",
+        price: 1000,
+        width: 100,
+        height: 30,
+        lenght: 10,
+        weight: 3,
+        currency: "USD",
+      };
+    },
+  };
+  checkout = new Checkout(currencyGateway, productRepository);
   const input = {
     taxNumber: "407.302.170-27",
-    items: [{ idProduct: 5, quantity: 1 }],
+    items: [{ idProduct: 6, quantity: 1 }],
   };
   const output = await checkout.execute(input);
   expect(output.total).toBe(3000);
