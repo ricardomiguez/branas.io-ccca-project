@@ -1,5 +1,6 @@
 import sinon from "sinon";
 import Checkout from "../src/Checkout";
+import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 
@@ -120,7 +121,7 @@ test("Should create an order with 1 product calculating the shipping with a mini
   expect(output.total).toBe(40);
 });
 
-test("Should create an order with 1 product in dollar currency", async function () {
+test("Should create an order with 1 product in dollar currency (using a stub)", async function () {
   const stubCurrencyGateway = sinon
     .stub(CurrencyGatewayHttp.prototype, "getCurrencies")
     .resolves({ usd: 3 });
@@ -144,4 +145,31 @@ test("Should create an order with 1 product in dollar currency", async function 
   expect(output.total).toBe(3000);
   stubCurrencyGateway.restore();
   stubProductRepository.restore();
+});
+
+test("Should create an order with 3 products applying a discount coupon (using a spy)", async function () {
+  const spyProductRepository = sinon.spy(
+    ProductRepositoryDatabase.prototype,
+    "getProduct"
+  );
+  const spyCouponRepository = sinon.spy(
+    CouponRepositoryDatabase.prototype,
+    "getCoupon"
+  );
+  const input = {
+    taxNumber: "407.302.170-27",
+    items: [
+      { idProduct: 1, quantity: 1 },
+      { idProduct: 2, quantity: 1 },
+      { idProduct: 3, quantity: 3 },
+    ],
+    coupon: "DISCOUNT20",
+  };
+  const output = await checkout.execute(input);
+  expect(output.total).toBe(4872);
+  expect(spyProductRepository.calledThrice).toBeTruthy();
+  expect(spyCouponRepository.calledOnce).toBeTruthy();
+  expect(spyCouponRepository.calledWith("DISCOUNT20")).toBeTruthy();
+  spyProductRepository.restore();
+  spyCouponRepository.restore();
 });
