@@ -1,4 +1,5 @@
 import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
+import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
 import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
 import { validate } from "./validator";
 
@@ -7,6 +8,8 @@ export default class Checkout {
     const isValid = validate(input.taxNumber);
     if (!isValid) throw new Error("Invalid tax number");
     const output: Output = { total: 0, shipping: 0 };
+    const currencyGateway = new CurrencyGatewayHttp();
+    const currencies = await currencyGateway.getCurrencies();
     const items: number[] = [];
     if (input.items) {
       for (const item of input.items) {
@@ -21,7 +24,12 @@ export default class Checkout {
           parseFloat(productData.weight) <= 0
         )
           throw new Error("Invalid dimension");
-        output.total += parseFloat(productData.price) * item.quantity;
+        if (productData.currency === "USD") {
+          output.total +=
+            parseFloat(productData.price) * item.quantity * currencies.usd;
+        } else {
+          output.total += parseFloat(productData.price) * item.quantity;
+        }
         const volume =
           ((((productData.width / 100) * productData.height) / 100) *
             productData.lenght) /
