@@ -173,3 +173,16 @@ test("Should create an order with 3 products applying a discount coupon (using a
   spyProductRepository.restore();
   spyCouponRepository.restore();
 });
+
+test("Should create an order with 1 product in dollar currency (using a mock)", async function () {
+  const mockCurrencyGateway = sinon.mock(CurrencyGatewayHttp.prototype);
+  mockCurrencyGateway.expects("getCurrencies").once().resolves({ usd: 3 });
+  const input = {
+    taxNumber: "407.302.170-27",
+    items: [{ idProduct: 5, quantity: 1 }],
+  };
+  const output = await checkout.execute(input);
+  expect(output.total).toBe(3000);
+  mockCurrencyGateway.verify();
+  mockCurrencyGateway.restore();
+});
