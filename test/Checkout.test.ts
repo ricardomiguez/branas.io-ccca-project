@@ -1,4 +1,7 @@
+import sinon from "sinon";
 import Checkout from "../src/Checkout";
+import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
+import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 
 let checkout: Checkout;
 
@@ -118,10 +121,27 @@ test("Should create an order with 1 product calculating the shipping with a mini
 });
 
 test("Should create an order with 1 product in dollar currency", async function () {
+  const stubCurrencyGateway = sinon
+    .stub(CurrencyGatewayHttp.prototype, "getCurrencies")
+    .resolves({ usd: 3 });
+  const stubProductRepository = sinon
+    .stub(ProductRepositoryDatabase.prototype, "getProduct")
+    .resolves({
+      idProduct: 5,
+      description: "A",
+      price: 1000,
+      width: 100,
+      height: 30,
+      lenght: 10,
+      weight: 3,
+      currency: "USD",
+    });
   const input = {
     taxNumber: "407.302.170-27",
     items: [{ idProduct: 5, quantity: 1 }],
   };
   const output = await checkout.execute(input);
   expect(output.total).toBe(3000);
+  stubCurrencyGateway.restore();
+  stubProductRepository.restore();
 });
