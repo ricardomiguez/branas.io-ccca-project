@@ -4,6 +4,7 @@ import CurrencyGateway from "./CurrencyGateway";
 import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
 import ProductRepository from "./ProductRepository";
 import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
+import ShippingCalculator from "./ShippingCalculator";
 import { validate } from "./validator";
 
 export default class Checkout {
@@ -39,12 +40,7 @@ export default class Checkout {
         } else {
           output.total += parseFloat(productData.price) * item.quantity;
         }
-        const volume =
-          ((((productData.width / 100) * productData.height) / 100) *
-            productData.lenght) /
-          100;
-        const density = parseFloat(productData.weight) / volume;
-        const itemShipping = 1000 * volume * (density / 100);
+        const itemShipping = ShippingCalculator.calculate(productData);
         output.shipping += Math.max(itemShipping, 10) * item.quantity;
         items.push(item.idProduct);
       }
