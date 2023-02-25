@@ -1,3 +1,4 @@
+import CouponRepository from "./CouponRepository";
 import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
 import CurrencyGateway from "./CurrencyGateway";
 import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
@@ -8,7 +9,8 @@ import { validate } from "./validator";
 export default class Checkout {
   constructor(
     readonly currencyGateway: CurrencyGateway = new CurrencyGatewayHttp(),
-    readonly productRepository: ProductRepository = new ProductRepositoryDatabase()
+    readonly productRepository: ProductRepository = new ProductRepositoryDatabase(),
+    readonly couponRepository: CouponRepository = new CouponRepositoryDatabase()
   ) {}
 
   async execute(input: Input): Promise<Output> {
@@ -48,8 +50,7 @@ export default class Checkout {
       }
     }
     if (input.coupon) {
-      const couponRepository = new CouponRepositoryDatabase();
-      const couponData = await couponRepository.getCoupon(input.coupon);
+      const couponData = await this.couponRepository.getCoupon(input.coupon);
       if (couponData.expire_date.getTime() >= new Date().getTime()) {
         const percentage = parseFloat(couponData.percentage);
         output.total -= (output.total * percentage) / 100;

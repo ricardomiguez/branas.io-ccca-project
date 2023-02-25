@@ -1,6 +1,7 @@
 import pgp from "pg-promise";
+import CouponRepository from "./CouponRepository";
 
-export default class CouponRepositoryDatabase {
+export default class CouponRepositoryDatabase implements CouponRepository {
   async getCoupon(code: string): Promise<any> {
     const connection = pgp()(
       "postgres://postgres:123456@localhost:5432/ricardomiguez"
