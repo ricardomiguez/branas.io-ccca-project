@@ -2,16 +2,18 @@ import CouponRepository from "./CouponRepository";
 import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
 import CurrencyGateway from "./CurrencyGateway";
 import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
+import OrderRepository from "./OrderRepository";
+import orderRepositoryDatabase from "./OrderRepositoryDatabase";
 import ProductRepository from "./ProductRepository";
 import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
-import ShippingCalculator from "./ShippingCalculator";
 import { validate } from "./validator";
 
 export default class Checkout {
   constructor(
     readonly currencyGateway: CurrencyGateway = new CurrencyGatewayHttp(),
     readonly productRepository: ProductRepository = new ProductRepositoryDatabase(),
-    readonly couponRepository: CouponRepository = new CouponRepositoryDatabase()
+    readonly couponRepository: CouponRepository = new CouponRepositoryDatabase(),
+    readonly orderRepository: OrderRepository = new orderRepositoryDatabase()
   ) {}
 
   async execute(input: Input): Promise<Output> {
@@ -40,8 +42,14 @@ export default class Checkout {
         } else {
           output.total += parseFloat(productData.price) * item.quantity;
         }
-        const itemShipping = ShippingCalculator.calculate(productData);
+        const volume =
+          ((((productData.width / 100) * productData.height) / 100) *
+            productData.lenght) /
+          100;
+        const density = parseFloat(productData.weight) / volume;
+        const itemShipping = 1000 * volume * (density / 100);
         output.shipping += Math.max(itemShipping, 10) * item.quantity;
+        item.price = parseFloat(productData.price);
         items.push(item.idProduct);
       }
     }
@@ -55,13 +63,22 @@ export default class Checkout {
     if (input.from && input.to) {
       output.total += output.shipping;
     }
+    const order = {
+      idOrder: input.uuid,
+      taxNumber: input.taxNumber,
+      total: output.total,
+      shipping: output.shipping,
+      items: input.items,
+    };
+    await this.orderRepository.save(order);
     return output;
   }
 }
 
 type Input = {
+  uuid?: string;
   taxNumber: string;
-  items: { idProduct: number; quantity: number }[];
+  items: { idProduct: number; quantity: number; price?: number }[];
   coupon?: string;
   from?: string;
   to?: string;
