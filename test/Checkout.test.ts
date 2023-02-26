@@ -1,15 +1,19 @@
+import crypto from "crypto";
 import sinon from "sinon";
 import Checkout from "../src/Checkout";
 import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
 import CurrencyGateway from "../src/CurrencyGateway";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
+import GetOrder from "../src/GetOrder";
 import ProductRepository from "../src/ProductRepository";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 
 let checkout: Checkout;
+let getOrder: GetOrder;
 
 beforeEach(function () {
   checkout = new Checkout();
+  getOrder = new GetOrder();
 });
 
 test("Should not accept an invalid tax number", async function () {
@@ -26,7 +30,9 @@ test("Should create an empty order", async function () {
 });
 
 test("Should create an order with 3 products", async function () {
+  const uuid = crypto.randomUUID();
   const input = {
+    uuid,
     taxNumber: "407.302.170-27",
     items: [
       { idProduct: 1, quantity: 1 },
@@ -34,7 +40,8 @@ test("Should create an order with 3 products", async function () {
       { idProduct: 3, quantity: 3 },
     ],
   };
-  const output = await checkout.execute(input);
+  await checkout.execute(input);
+  const output = await getOrder.execute(uuid);
   expect(output.total).toBe(6090);
 });
 
