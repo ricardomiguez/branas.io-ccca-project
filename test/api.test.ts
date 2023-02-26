@@ -5,7 +5,7 @@ axios.defaults.validateStatus = function () {
 };
 
 test("Should not accept an invalid tax number", async function () {
-  const input = { taxNumber: "406.302.170-27" };
+  const input = { taxNumber: "406.302.170-27", items: [] };
   const response = await axios.post("http://localhost:3000/checkout", input);
   const output = response.data;
   expect(response.status).toBe(422);
@@ -13,7 +13,7 @@ test("Should not accept an invalid tax number", async function () {
 });
 
 test("Should create an empty order", async function () {
-  const input = { taxNumber: "407.302.170-27" };
+  const input = { taxNumber: "407.302.170-27", items: [] };
   const response = await axios.post("http://localhost:3000/checkout", input);
   const output = response.data;
   expect(output.total).toBe(0);
