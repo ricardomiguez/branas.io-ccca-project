@@ -34,6 +34,7 @@ insert into ccca.coupon (code, percentage, expire_date) values ('DISCOUNT10', 10
 create table ccca.order (
   id_order text,
   tax_number text,
+  code text,
   total numeric,
   shipping numeric
 );
