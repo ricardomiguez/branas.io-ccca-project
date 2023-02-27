@@ -5,6 +5,7 @@ import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
 import CurrencyGateway from "../src/CurrencyGateway";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
 import GetOrder from "../src/GetOrder";
+import orderRepositoryDatabase from "../src/OrderRepositoryDatabase";
 import ProductRepository from "../src/ProductRepository";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
 
@@ -225,4 +226,22 @@ test("Should create an order with 1 product in dollar currency (using a fake)", 
   };
   const output = await checkout.execute(input);
   expect(output.total).toBe(3000);
+});
+
+test("Should create an order and verify the order code", async function () {
+  const stub = sinon.stub(orderRepositoryDatabase.prototype, "count").resolves(1);
+  const uuid = crypto.randomUUID();
+  const input = {
+    uuid,
+    taxNumber: "407.302.170-27",
+    items: [
+      { idProduct: 1, quantity: 1 },
+      { idProduct: 2, quantity: 1 },
+      { idProduct: 3, quantity: 3 },
+    ],
+  };
+  await checkout.execute(input);
+  const output = await getOrder.execute(uuid);
+  expect(output.code).toBe("202300000001");
+  stub.restore();
 });
