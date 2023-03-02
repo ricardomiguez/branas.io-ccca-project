@@ -1,7 +1,19 @@
 export default class Order {
-  constructor(readonly idOrder: string, taxNumber: string) {}
+  items: Item[];
+
+  constructor(readonly idOrder: string, taxNumber: string) {
+    this.items = [];
+  }
+
+  addItem(product: Product, quantity: number) {
+    this.items.push(new Item(product.idProduct, product.price, quantity));
+  }
 
   getTotal() {
-    return 0;
+    let total = 0;
+    for (const item of this.items) {
+      total += item.price * item.quantity;
+    }
+    return total;
   }
 }
