@@ -1,3 +1,6 @@
+import Item from "./Item";
+import Product from "./Product";
+
 export default class Order {
   items: Item[];
 
