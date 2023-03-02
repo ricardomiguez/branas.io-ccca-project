@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import Order from "../src/Order";
+import Product from "../src/Product";
 
 test("Should create an empty order", async function () {
   const uuid = crypto.randomUUID();
