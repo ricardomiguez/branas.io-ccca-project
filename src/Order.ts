@@ -12,6 +12,7 @@ export default class Order {
   }
 
   addItem(product: Product, quantity: number) {
+    if (quantity <= 0) throw new Error("Invalid quantity");
     if (this.items.some((item: Item) => item.idProduct === product.idProduct))
       throw new Error("Duplicated item");
     this.items.push(new Item(product.idProduct, product.price, quantity));
