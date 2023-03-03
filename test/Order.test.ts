@@ -36,3 +36,12 @@ test("Should not add duplicate items", async function () {
     order.addItem(new Product(1, "A", 1000, 100, 30, 10, 3, "BRL"), 1)
   ).toThrow(new Error("Duplicated item"));
 });
+
+test("Should not add an item with quantity equal to or less than 0", async function () {
+  const uuid = crypto.randomUUID();
+  const taxNumber = "407.302.170-27";
+  const order = new Order(uuid, taxNumber);
+  expect(() =>
+    order.addItem(new Product(1, "A", 1000, 100, 30, 10, 3, "BRL"), -1)
+  ).toThrow(new Error("Invalid quantity"));
+});
