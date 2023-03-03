@@ -1,11 +1,14 @@
 import Item from "./Item";
 import Product from "./Product";
+import TaxNumber from "./TaxNumber";
 
 export default class Order {
   items: Item[];
+  taxNumber: TaxNumber;
 
   constructor(readonly idOrder: string, taxNumber: string) {
     this.items = [];
+    this.taxNumber = new TaxNumber(taxNumber);
   }
 
   addItem(product: Product, quantity: number) {
