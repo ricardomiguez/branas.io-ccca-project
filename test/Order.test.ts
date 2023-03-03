@@ -26,3 +26,13 @@ test("Should create an order with 3 products", async function () {
   order.addItem(new Product(3, "C", 30, 10, 10, 10, 0.9, "BRL"), 3);
   expect(order.getTotal()).toBe(6090);
 });
+
+test("Should not add duplicate items", async function () {
+  const uuid = crypto.randomUUID();
+  const taxNumber = "407.302.170-27";
+  const order = new Order(uuid, taxNumber);
+  order.addItem(new Product(1, "A", 1000, 100, 30, 10, 3, "BRL"), 1);
+  expect(() =>
+    order.addItem(new Product(1, "A", 1000, 100, 30, 10, 3, "BRL"), 1)
+  ).toThrow(new Error("Duplicated item"));
+});
