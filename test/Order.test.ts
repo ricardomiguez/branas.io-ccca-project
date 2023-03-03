@@ -2,6 +2,14 @@ import crypto from "crypto";
 import Order from "../src/Order";
 import Product from "../src/Product";
 
+test("Should not create an order with an invalid tax number", async function () {
+  const uuid = crypto.randomUUID();
+  const taxNumber = "406.302.170-27";
+  expect(() => new Order(uuid, taxNumber)).toThrow(
+    new Error("Invalid tax number")
+  );
+});
+
 test("Should create an empty order", async function () {
   const uuid = crypto.randomUUID();
   const taxNumber = "407.302.170-27";
