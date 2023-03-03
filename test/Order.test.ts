@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import CurrencyTable from "../src/CurrencyTable";
 import Order from "../src/Order";
 import Product from "../src/Product";
 
