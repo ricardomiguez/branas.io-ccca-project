@@ -58,3 +58,16 @@ test("Should create an order with 3 products, one of them in dollar currency", a
   order.addItem(new Product(3, "C", 30, 10, 10, 10, 0.9, "BRL"), 3);
   expect(order.getTotal()).toBe(16090);
 });
+
+test("Should create an order and generate its code", async function () {
+  const uuid = crypto.randomUUID();
+  const taxNumber = "407.302.170-27";
+  const order = new Order(
+    uuid,
+    taxNumber,
+    new CurrencyTable(),
+    1,
+    new Date("2023-10-01T10:00:00")
+  );
+  expect(order.getCode()).toBe("202300000001");
+});
