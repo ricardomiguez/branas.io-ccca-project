@@ -11,7 +11,7 @@ function removePunctuation(taxNumber: string) {
   return taxNumber.replace(/\D/g, "");
 }
 
-function isLenghtValid(taxNumber: string) {
+function isLengthValid(taxNumber: string) {
   return taxNumber.length !== 11;
 }
 
@@ -26,7 +26,7 @@ function extractCheckDigits(taxNumber: string) {
 export function validate(taxNumber: string) {
   if (!taxNumber) return false;
   const formattedTaxNumber = removePunctuation(taxNumber);
-  if (isLenghtValid(formattedTaxNumber)) return false;
+  if (isLengthValid(formattedTaxNumber)) return false;
   if (isRepdigit(formattedTaxNumber)) return false;
   const firstDigit = calculateCheckDigit(formattedTaxNumber, 10);
   const secondDigit = calculateCheckDigit(formattedTaxNumber, 11);

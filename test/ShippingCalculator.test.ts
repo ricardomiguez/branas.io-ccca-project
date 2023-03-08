@@ -7,7 +7,7 @@ test("Should calculate product shipping", async function () {
     price: 1000,
     width: 100,
     height: 30,
-    lenght: 10,
+    length: 10,
     weight: 3,
     currency: "USD",
   };

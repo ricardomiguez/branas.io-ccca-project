@@ -19,7 +19,7 @@ export default class TaxNumber {
     return taxNumber.replace(/\D/g, "");
   }
 
-  isLenghtValid(taxNumber: string) {
+  isLengthValid(taxNumber: string) {
     return taxNumber.length !== 11;
   }
 
@@ -34,7 +34,7 @@ export default class TaxNumber {
   validate(taxNumber: string) {
     if (!taxNumber) return false;
     const formattedTaxNumber = this.removePunctuation(taxNumber);
-    if (this.isLenghtValid(formattedTaxNumber)) return false;
+    if (this.isLengthValid(formattedTaxNumber)) return false;
     if (this.isRepdigit(formattedTaxNumber)) return false;
     const firstDigit = this.calculateCheckDigit(formattedTaxNumber, 10);
     const secondDigit = this.calculateCheckDigit(formattedTaxNumber, 11);

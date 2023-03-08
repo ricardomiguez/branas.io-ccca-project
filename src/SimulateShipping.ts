@@ -15,7 +15,7 @@ export default class SimulateShipping {
         );
         const volume =
           ((((productData.width / 100) * productData.height) / 100) *
-            productData.lenght) /
+            productData.length) /
           100;
         const density = parseFloat(productData.weight) / volume;
         const itemShipping = 1000 * volume * (density / 100);

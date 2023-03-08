@@ -32,7 +32,7 @@ export default class Checkout {
         if (
           productData.width <= 0 ||
           productData.height <= 0 ||
-          productData.lenght <= 0 ||
+          productData.length <= 0 ||
           parseFloat(productData.weight) <= 0
         )
           throw new Error("Invalid dimension");
@@ -44,7 +44,7 @@ export default class Checkout {
         }
         const volume =
           ((((productData.width / 100) * productData.height) / 100) *
-            productData.lenght) /
+            productData.length) /
           100;
         const density = parseFloat(productData.weight) / volume;
         const itemShipping = 1000 * volume * (density / 100);
