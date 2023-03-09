@@ -1,8 +1,9 @@
 import pgp from "pg-promise";
+import Product from "./Product";
 import ProductRepository from "./ProductRepository";
 
 export default class ProductRepositoryDatabase implements ProductRepository {
-  async getProduct(idProduct: number): Promise<any> {
+  async getProduct(idProduct: number): Promise<Product> {
     const connection = pgp()(
       "postgres://postgres:123456@localhost:5432/ricardomiguez"
     );
@@ -11,6 +12,15 @@ export default class ProductRepositoryDatabase implements ProductRepository {
       [idProduct]
     );
     await connection.$pool.end();
-    return productData;
+    return new Product(
+      productData.id_product,
+      productData.description,
+      parseFloat(productData.price),
+      productData.width,
+      productData.height,
+      productData.length,
+      parseFloat(productData.weight),
+      productData.currency
+    );
   }
 }
