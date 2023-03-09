@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import CurrencyTable from "./CurrencyTable";
 import Item from "./Item";
 import Product from "./Product";
@@ -7,14 +8,16 @@ export default class Order {
   readonly items: Item[];
   readonly taxNumber: TaxNumber;
   readonly code: string;
+  shipping = 0;
 
   constructor(
-    readonly idOrder: string,
+    readonly idOrder: string | undefined,
     taxNumber: string,
     readonly currencyTable: CurrencyTable = new CurrencyTable(),
     readonly sequence: number = 1,
     readonly date: Date = new Date()
   ) {
+    if (!idOrder) this.idOrder = crypto.randomUUID();
     this.items = [];
     this.taxNumber = new TaxNumber(taxNumber);
     this.code = `${date.getFullYear()}${new String(sequence).padStart(8, "0")}`;
@@ -41,6 +44,7 @@ export default class Order {
         item.quantity *
         this.currencyTable.getCurrency(item.currency);
     }
+    total += this.shipping;
     return total;
   }
 }
