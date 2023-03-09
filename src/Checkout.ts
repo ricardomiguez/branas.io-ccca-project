@@ -2,11 +2,13 @@ import CouponRepository from "./CouponRepository";
 import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
 import CurrencyGateway from "./CurrencyGateway";
 import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
+import CurrencyTable from "./CurrencyTable";
+import Order from "./Order";
 import OrderRepository from "./OrderRepository";
 import orderRepositoryDatabase from "./OrderRepositoryDatabase";
 import ProductRepository from "./ProductRepository";
 import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
-import { validate } from "./validator";
+import ShippingCalculator from "./ShippingCalculator";
 
 export default class Checkout {
   constructor(
@@ -17,65 +19,38 @@ export default class Checkout {
   ) {}
 
   async execute(input: Input): Promise<Output> {
-    const isValid = validate(input.taxNumber);
-    if (!isValid) throw new Error("Invalid tax number");
-    const output: Output = { total: 0, shipping: 0 };
     const currencies = await this.currencyGateway.getCurrencies();
-    const items: number[] = [];
+    const currencyTable = new CurrencyTable();
+    currencyTable.addCurrency("USD", currencies.usd);
+    const sequence = await this.orderRepository.count();
+    const order = new Order(
+      input.uuid,
+      input.taxNumber,
+      currencyTable,
+      sequence,
+      new Date()
+    );
+    let shipping = 0;
     if (input.items) {
       for (const item of input.items) {
-        if (item.quantity <= 0) throw new Error("Invalid quantity");
-        if (items.includes(item.idProduct)) throw new Error("Duplicated item");
-        const productData = await this.productRepository.getProduct(
-          item.idProduct
-        );
-        if (
-          productData.width <= 0 ||
-          productData.height <= 0 ||
-          productData.length <= 0 ||
-          parseFloat(productData.weight) <= 0
-        )
-          throw new Error("Invalid dimension");
-        if (productData.currency === "USD") {
-          output.total +=
-            parseFloat(productData.price) * item.quantity * currencies.usd;
-        } else {
-          output.total += parseFloat(productData.price) * item.quantity;
-        }
-        const volume =
-          ((((productData.width / 100) * productData.height) / 100) *
-            productData.length) /
-          100;
-        const density = parseFloat(productData.weight) / volume;
-        const itemShipping = 1000 * volume * (density / 100);
-        output.shipping += Math.max(itemShipping, 10) * item.quantity;
-        item.price = parseFloat(productData.price);
-        items.push(item.idProduct);
-      }
-    }
-    if (input.coupon) {
-      const couponData = await this.couponRepository.getCoupon(input.coupon);
-      if (couponData.expire_date.getTime() >= new Date().getTime()) {
-        const percentage = parseFloat(couponData.percentage);
-        output.total -= (output.total * percentage) / 100;
+        const product = await this.productRepository.getProduct(item.idProduct);
+        order.addItem(product, item.quantity);
+        const itemShipping = ShippingCalculator.calculate(product);
+        shipping += Math.max(itemShipping, 10) * item.quantity;
       }
     }
     if (input.from && input.to) {
-      output.total += output.shipping;
+      order.shipping = shipping;
     }
-    const year = new Date().getFullYear();
-    const sequence = await this.orderRepository.count();
-    const code = `${year}${new String(sequence).padStart(8, "0")}`;
-    const order = {
-      idOrder: input.uuid,
-      taxNumber: input.taxNumber,
-      code,
-      total: output.total,
-      shipping: output.shipping,
-      items: input.items,
-    };
+    let total = order.getTotal();
+    if (input.coupon) {
+      const coupon = await this.couponRepository.getCoupon(input.coupon);
+      if (!coupon.isExpired(order.date)) {
+        total -= (total * coupon.percentage) / 100;
+      }
+    }
     await this.orderRepository.save(order);
-    return output;
+    return { total, shipping };
   }
 }
 
