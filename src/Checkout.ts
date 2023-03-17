@@ -42,13 +42,11 @@ export default class Checkout {
     if (input.from && input.to) {
       order.shipping = shipping;
     }
-    let total = order.getTotal();
     if (input.coupon) {
       const coupon = await this.couponRepository.getCoupon(input.coupon);
-      if (!coupon.isExpired(order.date)) {
-        total -= coupon.calculateDiscount(total);
-      }
+      order.addCoupon(coupon);
     }
+    let total = order.getTotal();
     await this.orderRepository.save(order);
     return { total, shipping };
   }

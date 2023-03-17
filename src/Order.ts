@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import Coupon from "./Coupon";
 import CurrencyTable from "./CurrencyTable";
 import Item from "./Item";
 import Product from "./Product";
@@ -8,6 +9,7 @@ export default class Order {
   readonly items: Item[];
   readonly taxNumber: TaxNumber;
   readonly code: string;
+  coupon?: Coupon;
   shipping = 0;
 
   constructor(
@@ -32,6 +34,10 @@ export default class Order {
     );
   }
 
+  addCoupon(coupon: Coupon) {
+    if (!coupon.isExpired(this.date)) this.coupon = coupon;
+  }
+
   getCode() {
     return this.code;
   }
@@ -43,6 +49,9 @@ export default class Order {
         item.price *
         item.quantity *
         this.currencyTable.getCurrency(item.currency);
+    }
+    if (this.coupon) {
+      total -= this.coupon.calculateDiscount(total);
     }
     total += this.shipping;
     return total;
