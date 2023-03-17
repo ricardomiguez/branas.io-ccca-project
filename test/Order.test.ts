@@ -1,7 +1,7 @@
 import crypto from "crypto";
-import CurrencyTable from "../src/CurrencyTable";
-import Order from "../src/Order";
-import Product from "../src/Product";
+import CurrencyTable from "../src/domain/entity/CurrencyTable";
+import Order from "../src/domain/entity/Order";
+import Product from "../src/domain/entity/Product";
 
 test("Should not create an order with an invalid tax number", async function () {
   const uuid = crypto.randomUUID();

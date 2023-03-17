@@ -1,4 +1,4 @@
-import Coupon from "../src/Coupon";
+import Coupon from "../src/domain/entity/Coupon";
 
 test("Should create a valid discount coupon", function () {
   const input = new Coupon("DISCOUNT20", 20, new Date("2023-10-01T10:00:00"));

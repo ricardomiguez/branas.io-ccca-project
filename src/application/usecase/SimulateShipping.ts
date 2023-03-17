@@ -1,6 +1,6 @@
-import ProductRepository from "./ProductRepository";
-import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
-import ShippingCalculator from "./ShippingCalculator";
+import ShippingCalculator from "../../domain/entity/ShippingCalculator";
+import ProductRepository from "../../ProductRepository";
+import ProductRepositoryDatabase from "../../ProductRepositoryDatabase";
 
 export default class SimulateShipping {
   constructor(

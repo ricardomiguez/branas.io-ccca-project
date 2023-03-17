@@ -1,4 +1,4 @@
-import ValidateCoupon from "../src/ValidateCoupon";
+import ValidateCoupon from "../src/application/usecase/ValidateCoupon";
 
 let validateCoupon: ValidateCoupon;
 

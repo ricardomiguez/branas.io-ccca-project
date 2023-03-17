@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import sinon from "sinon";
-import Checkout from "../src/Checkout";
+import Checkout from "../src/application/usecase/Checkout";
+import GetOrder from "../src/application/usecase/GetOrder";
 import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
 import CurrencyGateway from "../src/CurrencyGateway";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
-import GetOrder from "../src/GetOrder";
 import orderRepositoryDatabase from "../src/OrderRepositoryDatabase";
 import ProductRepository from "../src/ProductRepository";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
@@ -229,7 +229,9 @@ test("Should create an order with 1 product in dollar currency (using a fake)", 
 });
 
 test("Should create an order and verify the order code", async function () {
-  const stub = sinon.stub(orderRepositoryDatabase.prototype, "count").resolves(1);
+  const stub = sinon
+    .stub(orderRepositoryDatabase.prototype, "count")
+    .resolves(1);
   const uuid = crypto.randomUUID();
   const input = {
     uuid,

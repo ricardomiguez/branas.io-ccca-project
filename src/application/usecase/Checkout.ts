@@ -1,14 +1,14 @@
-import CouponRepository from "./CouponRepository";
-import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
-import CurrencyGateway from "./CurrencyGateway";
-import CurrencyGatewayHttp from "./CurrencyGatewayHttp";
-import CurrencyTable from "./CurrencyTable";
-import Order from "./Order";
-import OrderRepository from "./OrderRepository";
-import orderRepositoryDatabase from "./OrderRepositoryDatabase";
-import ProductRepository from "./ProductRepository";
-import ProductRepositoryDatabase from "./ProductRepositoryDatabase";
-import ShippingCalculator from "./ShippingCalculator";
+import CouponRepository from "../../CouponRepository";
+import CouponRepositoryDatabase from "../../CouponRepositoryDatabase";
+import CurrencyGateway from "../../CurrencyGateway";
+import CurrencyGatewayHttp from "../../CurrencyGatewayHttp";
+import CurrencyTable from "../../domain/entity/CurrencyTable";
+import Order from "../../domain/entity/Order";
+import ShippingCalculator from "../../domain/entity/ShippingCalculator";
+import OrderRepository from "../../OrderRepository";
+import orderRepositoryDatabase from "../../OrderRepositoryDatabase";
+import ProductRepository from "../../ProductRepository";
+import ProductRepositoryDatabase from "../../ProductRepositoryDatabase";
 
 export default class Checkout {
   constructor(

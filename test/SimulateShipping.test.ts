@@ -1,4 +1,4 @@
-import SimulateShipping from "../src/SimulateShipping";
+import SimulateShipping from "../src/application/usecase/SimulateShipping";
 
 let simulateShipping: SimulateShipping;
 

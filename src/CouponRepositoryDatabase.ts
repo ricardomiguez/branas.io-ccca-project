@@ -1,6 +1,6 @@
 import pgp from "pg-promise";
-import Coupon from "./Coupon";
 import CouponRepository from "./CouponRepository";
+import Coupon from "./domain/entity/Coupon";
 
 export default class CouponRepositoryDatabase implements CouponRepository {
   async getCoupon(code: string): Promise<Coupon> {

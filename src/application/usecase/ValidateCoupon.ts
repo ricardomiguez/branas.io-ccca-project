@@ -1,5 +1,5 @@
-import CouponRepository from "./CouponRepository";
-import CouponRepositoryDatabase from "./CouponRepositoryDatabase";
+import CouponRepository from "../../CouponRepository";
+import CouponRepositoryDatabase from "../../CouponRepositoryDatabase";
 
 export default class ValidateCoupon {
   constructor(
