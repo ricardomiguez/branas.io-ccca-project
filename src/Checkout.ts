@@ -46,7 +46,7 @@ export default class Checkout {
     if (input.coupon) {
       const coupon = await this.couponRepository.getCoupon(input.coupon);
       if (!coupon.isExpired(order.date)) {
-        total -= (total * coupon.percentage) / 100;
+        total -= coupon.calculateDiscount(total);
       }
     }
     await this.orderRepository.save(order);
