@@ -5,6 +5,7 @@ import GetOrder from "../src/application/usecase/GetOrder";
 import CouponRepositoryDatabase from "../src/CouponRepositoryDatabase";
 import CurrencyGateway from "../src/CurrencyGateway";
 import CurrencyGatewayHttp from "../src/CurrencyGatewayHttp";
+import Product from "../src/domain/entity/Product";
 import orderRepositoryDatabase from "../src/OrderRepositoryDatabase";
 import ProductRepository from "../src/ProductRepository";
 import ProductRepositoryDatabase from "../src/ProductRepositoryDatabase";
@@ -137,16 +138,7 @@ test("Should create an order with 1 product in dollar currency (using a stub)", 
     .resolves({ usd: 3 });
   const stubProductRepository = sinon
     .stub(ProductRepositoryDatabase.prototype, "getProduct")
-    .resolves({
-      idProduct: 5,
-      description: "A",
-      price: 1000,
-      width: 100,
-      height: 30,
-      length: 10,
-      weight: 3,
-      currency: "USD",
-    });
+    .resolves(new Product(5, "A", 1000, 100, 30, 10, 3, "USD"));
   const input = {
     taxNumber: "407.302.170-27",
     items: [{ idProduct: 5, quantity: 1 }],
@@ -207,16 +199,7 @@ test("Should create an order with 1 product in dollar currency (using a fake)", 
   };
   const productRepository: ProductRepository = {
     async getProduct(): Promise<any> {
-      return {
-        idProduct: 6,
-        description: "A",
-        price: 1000,
-        width: 100,
-        height: 30,
-        length: 10,
-        weight: 3,
-        currency: "USD",
-      };
+      return new Product(6, "A", 1000, 100, 30, 10, 3, "USD");
     },
   };
   checkout = new Checkout(currencyGateway, productRepository);

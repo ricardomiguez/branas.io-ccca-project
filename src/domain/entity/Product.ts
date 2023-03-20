@@ -17,4 +17,8 @@ export default class Product {
     )
       throw new Error("Invalid dimension");
   }
+
+  getVolume() {
+    return ((((this.width / 100) * this.height) / 100) * this.length) / 100;
+  }
 }
